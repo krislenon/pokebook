@@ -1,0 +1,226 @@
+label{
+    color:#671110;
+    font-family: 'Gloria Hallelujah', cursive;
+}
+.name{
+  font-family: 'Gloria Hallelujah', cursive;
+  font-weight: bold;
+}
+.msg{
+  font-family: 'Indie Flower', cursive; 
+}
+.created{
+  font-family: 'Indie Flower', cursive;
+  font-size:10px;
+}
+.form-group:hover {
+    border-color:#671110;
+}
+.form-group{
+    opacity: 0.7;
+}
+.feed{
+  opacity: 0.7;
+}
+#search-search{
+  margin-top: 10px;
+  padding-top: 7px;
+}
+.searchnames{
+  background-color:#e5d467;
+  border-style: solid;
+  border-color:#d33b87;
+  width:500px;
+  height:100px;
+  border-radius: 20px;
+  margin-left:290px;
+}
+
+.btn-primary {
+    background-color:#f6528c;
+    border-color:#671110;
+    margin:5px;
+}
+.btn-primary:hover {
+    background-color:pink;
+    border-color:#671110;
+    color:#671110;
+}
+.btn-secondary {
+    color:white;
+    background-color:#ff9f5b;
+    border-color:#671110;
+    margin:5px;
+}
+.btn-secondary:hover {
+    background-color:#ffcea3;
+    border-color:#671110;
+    color:#671110;
+}
+
+.col-md-2 {
+    background-color:white;
+    margin: 100px;
+    border-color:#671110; 
+}
+
+.btn-link {
+    color:#671110;
+}
+
+.logo {
+    width:30px;
+    height:30px;
+    margin:8px;
+}
+.ads{
+  width:200px;
+  height:230px;
+
+}
+.homeads{
+  width:130px;
+  height:175px;
+}
+/* Remove the navbar's default margin-bottom and rounded borders */
+.navbar {
+  font-family: 'Bree Serif', serif;
+  color:white;
+  margin-bottom: 0;
+  border-radius: 0;
+  background-color: #212121;
+  border-color:#212121;
+}
+
+
+    
+/* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+.row.content {height: 450px}
+
+
+/* Set gray background color and 100% height */
+.sidenav {
+  margin-top:20px;
+  padding-top: 20px;
+  background-color: #f1f1f1;
+  height: 130%;
+  margin-left:20px;
+  font-family:'Indie Flower', cursive;
+  opacity:0.7;
+  border-radius: 20px;
+}
+.sidename{
+  margin-top:10px;
+}
+
+/* On small screens, set height to 'auto' for sidenav and grid */
+@media screen and (max-width: 767px) {
+  .sidenav {
+    height: 100%;
+    padding: 15px;
+
+  }
+  .row.content {height:auto;}
+}
+.search {
+    margin:10px;
+    width:300px;
+}
+.panel-body{
+  text-align: center;
+}
+#fname{
+    font-family: 'Indie Flower', cursive;
+    font-size:20px;
+}
+.main-div {
+    background-color: #fcfcd1;
+    height:130%;
+}
+
+.post-well {
+    height: 210px;
+}
+
+.panel {
+    height:100px;
+    opacity:0.7;
+    border-radius: 20px;
+}
+
+.profile-pic {
+    height: 200px;
+    width: 170px;
+}
+
+.profile-panel {
+    margin-top:10px;
+    width: 170px;
+    padding:20px;
+    height:30%;
+    border-radius: 20px;
+    opacity: 0.6;
+    font-family: 'Indie Flower', cursive;
+    font-size:20px;    
+}
+
+.profile-panel1 {
+    padding:20px;
+    height:40%;
+    border-radius:20px;
+    opacity: 0.6;
+    font-family: 'Indie Flower', cursive;
+    font-size:20px;
+}
+
+.add-button {
+    width:160px;
+}
+.card-div {
+  opacity: 0.6;
+}
+
+.card-div:hover {
+  opacity: 0.8;
+}
+
+.con-div {
+    background-color:white;
+    margin-left: 550px;
+    margin-top: 50px;
+    border-color:#671110; 
+    opacity:0.6;
+}
+
+.main-head {
+    font-size: 100px;
+    margin-top: 120px;
+    font-family: 'pokemon';
+}
+
+.title-head {
+    margin-top: 110px;
+    margin-right: 300px;
+    font-size: 30px;
+    font-family: 'pokemon';
+}
+
+@font-face {
+    font-family: 'pokemon'; /*a name to be used later*/
+    src: url('pocket.otf'); /*URL to font*/
+}
+body{
+  background-color:#fcfcd1;
+}
+.pika {
+  width:300px;
+  height:230px;
+  margin-left: 470px;
+  margin-top: 100px;
+}
+
+.search-div {
+  width: 500px;
+  height: 50px;
+  border-radius: 10px;
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Profile</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/CSS/custom.css" media="screen"/>
+  <link href="https://fonts.googleapis.com/css?family=Bree+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet"> 
+  <script type="text/javascript">
+      var myApp = angular.module("myApp", []);/*define module with name myApp*/
+      var url = document.URL.split('/')
+      var lastArg = url[url.length-1];
+      var loggedInArg = url[url.length-3];
+
+      myApp.controller('NavController',['$scope', '$http', function($scope, $http){
+        $scope.nav=loggedInArg;
+      }]);
+      
+      myApp.controller('ProfileController', ['$scope', '$http', function($scope, $http) {        
+          var isFriendVar = true;
+
+          $http.get('/usr/'+lastArg)
+            .then(function(response) {
+              $scope.usr = response.data[0]; //cause array response use console.log(response) to figure shit out
+            }
+          );
+
+          $http.get('/usr/' + lastArg + '/posts').then(function(response){
+              var posts = response.data;
+              $scope.usrposts = posts;
+            }
+          );
+
+          $http.get('/usr/' + lastArg + '/friends').then(function(response){
+              var friends = response.data;
+              $scope.usrfrnd = friends;
+            }
+          );
+
+          $scope.isSameUser = function(){
+            if(lastArg == loggedInArg){
+              return false;
+            }
+            else{
+              return true;
+            } 
+          };
+
+          $scope.addFriend = function(){
+            $http.get('/usr/' + loggedInArg + '/add/' + lastArg);
+            location.reload();
+          };
+
+          $scope.removeFriend = function(){
+            $http.get('/usr/' + loggedInArg + '/remove/' + lastArg);
+            location.reload();
+          };
+
+          $scope.viewProfile = function(profile_id){
+            window.location = "/profile/" + loggedInArg + "/view/" + profile_id;
+          };
+          $scope.editName = function(){
+            $http.post('/edit-name/'+$scope.newname);
+            location.reload();
+          }
+      }]);        
+  </script>      
+</head>
+<body class="main-div" ng-app="myApp">
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    <img src="/Images/logo.png" class="logo pull-left">
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right" ng-controller="NavController">
+        <li><a href="/home/{{nav}}">Home</a></li>
+        <li><a href="/profile/{{nav}}/view/{{nav}}">Profile</a></li>
+        <li><a href="/friends/{{nav}}">Friends</a></li>
+        <li><a href="/friendreq/{{nav}}">Friend Requests</a></li>
+        <li><a href="/search/{{nav}}">Search</a>
+        <li><a href="/logout">Log out</a>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center" ng-Controller="ProfileController">
+  <div class="row content">
+    <div class="container-fluid main-div col-sm-2 text-left">
+    <br>
+    <img src="/Images/profpic.jpg" class = "profile-pic">
+    <div ng-if="isSameUser()">
+      <button type="button" class="btn btn-primary add-button" ng-click="addFriend()">Add Friend</button>
+      <button type="button" class="btn btn-primary add-button" ng-click="removeFriend()">Remove Friend</button>
+    </div>
+    <div class="panel profile-panel">
+      <div class="well-sm">
+      {{ usr.fullname }}
+      </div>     
+      <button type="button" class="btn btn-primary pull-center" data-toggle="modal" data-target="#myModal">Edit Name</button>
+      </div>
+    </div>
+    <div class="container-fluid main-div col-sm-6 text-left">
+      <br>
+      <div class="panel profile-panel1" style="overflow: auto;">
+        List of Posts
+        <div ng-repeat="post in usrposts">
+          <div class="well"><a href="#"> {{ post.postmsg }}</a></div>
+        </div>
+      </div>
+      <div class="panel profile-panel1" style="overflow: auto;">
+        Friends Lists 
+        <div ng-repeat="friend in usrfrnd">
+          <div class="well">{{ friend.fullname }}<button class="btn btn-primary pull-right" ng-click="viewProfile(friend.user_id)">View Profile</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3 sidenav">
+      <div class="well">
+        <img src = "/Images/ads1.jpg" class="ads">
+      </div>
+      <div class="well">
+      <img src = "/Images/ads2.jpg" class="ads">
+      </div>   
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit name</h4>
+      </div>
+      <form ng-submit="editName()" ng-controller="ProfileController">
+        <input type="text" ng-model="newname">
+        <button type="submit" class="btn btn-primary"> Apply </button>
+      </form>      
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
+

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Pending friend requests</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+   <link rel="stylesheet" type="text/css" href="/CSS/custom.css" media="screen"/>
+   <link href="https://fonts.googleapis.com/css?family=Bree+Serif" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+  <script type="text/javascript">
+      var myApp = angular.module("myApp", []);/*define module with name myApp*/
+      var url = document.URL.split('/')
+      var lastArg = url[url.length-1];
+
+      myApp.controller('NavController',['$scope', '$http', function($scope, $http){
+        $scope.nav=lastArg;
+      }]);
+
+      myApp.controller('FriendRequestController', ['$scope', '$http', function($scope, $http){
+        $http.get('/usr/' + lastArg + '/friendreqs').then(
+          function(response){
+            $scope.friendreqs = response.data;
+          }
+        );
+
+        $scope.deleteReq = function(friendable_id){
+          $http.get('/usr/' + lastArg + '/remove/' + friendable_id);
+          location.reload();
+        };
+
+        $scope.acceptReq = function(friendable_id){
+          $http.get('/usr/' + lastArg + '/accept/' + friendable_id);
+          location.reload();
+        };
+      }]);
+  </script>
+</head>
+<body ng-app="myApp">
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+        <img src="/Images/logo.png" class="logo pull-left">     
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right" ng-controller="NavController">
+        <li><a href="/home/{{nav}}">Home</a></li>
+        <li><a href="/profile/{{nav}}/view/{{nav}}">Profile</a></li>
+        <li><a href="/friends/{{nav}}">Friends</a></li>
+        <li class="active"><a href="/friendreq/{{nav}}">Friend Requests</a></li>
+        <li><a href="/search/{{nav}}">Search</a>
+        <li><a href="/logout">Log out</a>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center" ng-controller="FriendRequestController">
+  <div class="row content">
+    <div class="col-sm-8 text-left"><br>
+      <div ng-repeat="friend in friendreqs">
+        <div class="panel panel-default">
+          <div class="panel-body" id="fname">{{friend.fullname}}
+                    <button type="button" class="btn btn-primary pull-right" ng-click="deleteReq(friend.user_id)">Delete Request</button>
+          <button type="button" class="btn btn-primary pull-right" ng-click="acceptReq(friend.user_id)">Accept</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2 sidenav">
+      <div class="well">
+         <img src = "/Images/ads1.jpg" class="homeads">
+      </div>
+      <div class="well">
+         <img src = "/Images/ads2.jpg" class="homeads">
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+

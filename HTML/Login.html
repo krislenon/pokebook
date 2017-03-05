@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Login</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../CSS/custom.css">
+        <script type="text/javascript">
+            //Angular shit here
+            var myApp = angular.module("CMSCApp", []);/*define module with name myApp*/
+
+            myApp.controller('LoginController', ['$scope', '$http', function($scope, $http) {
+                $scope.login = function(){
+                    $http.post('/login', $scope.user).then(
+                        function(response){
+                            console.log(response);
+                            var respArrLen = response.data.length;
+                            if(respArrLen < 1){
+                                console.log('no user');
+                                alert("Invalid Username or Password!")
+                            }
+                            else {
+                                //console.log('logged in')
+                                console.log(response.data[0].user_id);
+                                var user_id = response.data[0].user_id;
+                                /*window.location = "/authenticate/" + user_id;*/
+                                window.location ="/home/"+user_id
+                            }
+                        },
+
+                        function(error){
+                            console.log(error);
+                        }
+                    );
+                };
+            }]);
+        </script>
+    </head>
+    <body ng-app="CMSCApp" background="http://wallpapercave.com/wp/e6CCgcI.jpg">
+        <div class="container-fluid text-center" style="margin:auto" ng-controller="LoginController">
+            <div class="row">
+                <div class="col-md-2 col-md-offset-5 well  card-div">
+                    <h3>Login</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="usr">Email:</label>
+                            <input type="text" class="form-control" id="usr" ng-model="user.email">
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">Password:</label>
+                            <input type="password" class="form-control" id="pwd" ng-model="user.password">
+                        </div>
+                        <button type="button" class="btn btn-primary" ng-click="login()">Log in</button>
+                    </form>
+                    <a id="linkbtn" href="/register"><button type="button" class="btn btn-link">Register</button></a>
+                </div>
+                <p class="title-head">Pokebook! Where all your friends are pokemon</p>
+            </div>
+        </div>
+    </body>
+</html>

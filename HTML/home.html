@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>Home</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquerpost.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+ <link rel="stylesheet" type="text/css" href="/CSS/custom.css" media="screen"/>
+  <link href="https://fonts.googleapis.com/css?family=Bree+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Gloria+Hallelujah" rel="stylesheet"> 
+    <script>
+      var myApp = angular.module("myApp", []);/*define module with name myApp*/
+      var url = document.URL.split('/')
+      var lastArg = url[url.length-1]
+      myApp.controller('HomeController', ['$scope', '$http', function($scope, $http) {        
+        $http.get('/usr/'+lastArg)
+          .then(function(response) {
+            $scope.data = response.data
+            console.log(data);
+          });
+          
+          $scope.addpost=function(){
+            $http.post('/add-post'+lastArg, $scope.post);
+            location.reload();
+          };
+
+          $http.get('/view-post/' + lastArg).then(function(response){
+              var posts = response.data;
+              $scope.posts = posts;
+            }
+          );
+      }]);
+
+      myApp.controller('PostController', ['$scope', '$http', function($scope, $http){
+        $scope.likeClick = function(post_id){
+          $http.get('/like-post/' + post_id + "/" + lastArg);
+          location.reload();
+        };
+
+        $scope.unlikeClick = function(post_id){
+          $http.get('/unlike-post/' + post_id + "/" + lastArg);
+          location.reload();
+        };
+
+        $scope.deletePost = function(post_id){
+          $http.get('/delete-post/' + post_id);
+          location.reload();
+        }
+
+        $scope.updatePost = function(post_id){
+          $http.post('/update-post/' + post_id, $scope.updatepost);
+          location.reload();
+        };
+
+        $scope.isMine = function(fk_id){
+          if(fk_id == lastArg){
+            return true;
+          }
+          else{
+            return false;
+          }
+        }
+      }]);
+
+      myApp.controller('CommentController',['$scope', '$http', function($scope, $http){ //Child Controller ni Post naiinherit nya stuffs dun
+        $http.get('/post/' + $scope.post.post_id + '/comments/' + lastArg).then(function(response){
+          $scope.comments = response.data;
+        });
+        
+        $scope.addcomment = function(post_id){
+          $http.post('/add-comment/'+lastArg+"/"+post_id, $scope.comment);
+          location.reload();
+        };
+
+        $scope.likeComment = function(comment_id){
+          $http.get('/like-comment/' + comment_id + "/" + lastArg);
+          location.reload();
+        };
+
+        $scope.unlikeComment = function(comment_id){
+          $http.get('/unlike-comment/' + comment_id + "/" + lastArg);
+          location.reload();
+        };
+
+        $scope.deleteComment = function(comment_id){
+          $http.get('/delete-comment/' + comment_id);
+          location.reload();
+        };
+
+        $scope.updateComment = function(comment_id){
+          //console.log($scope.updatecomment);
+          var x = $('#comment-modal-' + comment_id + ' #update-input').val(); //ayaw gumana ng $scope sakanya
+          $scope.updatecomment = {text: x};
+          $http.post('/update-comment/' + comment_id, $scope.updatecomment);
+          location.reload();
+        };
+      }]);
+      myApp.controller('NavController',['$scope', '$http', function($scope, $http){ //Child Controller ni Post naiinherit nya 
+        $scope.nav=lastArg;
+      }]);      
+    </script> 
+</head>
+<body ng-app="myApp">
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+        <img src="/Images/logo.png" class="logo pull-left">     
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right" ng-controller="NavController">
+        <li><a href="/home/{{nav}}">Home</a></li>
+        <li><a href="/profile/{{nav}}/view/{{nav}}">Profile</a></li>
+        <li><a href="/friends/{{nav}}">Friends</a></li>
+        <li><a href="/friendreq/{{nav}}">Friend Requests</a></li>
+        <li><a href="/search/{{nav}}">Search</a>
+        <li><a href="/logout">Log out</a>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center" ng-controller="HomeController">
+  <div class="row content">
+    <div class="col-sm-2 sidenav" ng-repeat="x in data">
+     <img src="/Images/profpic.jpg" class = "profile-pic">
+     <div class="sidename">
+      <p><a href="#">{{x.fullname}}</a></p>
+      <p><a href="#">{{x.email}}</a></p>
+      </div>
+    </div>
+<br>
+    <div class="container-fluid col-sm-7 text-left">
+      <div class="form-group well">
+        <label for="status">What's on your mind?</label>
+        <textarea class="form-control" rows="3" id="status" ng-model="post.text"></textarea>
+        <form ng-submit="addpost()">
+        <button type="submit" class="btn btn-primary">Post</button>
+        </form>
+      </div>
+      <hr>
+       <div class="container-fluid well" ng-repeat="post in posts" ng-controller="PostController"> <!-- per post -->
+        <div class="well">
+          <div>
+            <p class="name"> {{post.authorname}}</p>
+            <p class="msg">{{post.postmsg}}</p>
+            <p class="created">Created: {{post.created_at}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <button type="button" class="btn btn-primary" ng-click="likeClick(post.post_id)" ng-if="!post.user_liked">Like</button> 
+            <button type="button" class="btn btn-info" ng-click="unlikeClick(post.post_id)" ng-if="post.user_liked">Unlike</button> 
+            <button type="submit" class="btn btn-secondary" ng-if="isMine(post.fk_author_id)" data-toggle="modal" data-target="#post-modal-{{post.post_id}}">Edit</button>
+            <button type="submit" class="btn btn-danger" ng-click="deletePost(post.post_id)" ng-if="isMine(post.fk_author_id)">Delete</button>
+            Liked by {{ post.num_likes }}
+
+            <!-- Modal -->
+            <div id="post-modal-{{post.post_id}}" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Post</h4>
+                  </div>
+                  <form ng-submit="updatePost(post.post_id)">
+                    <input type="text" value="{{post.postmsg}}" ng-model="updatepost.text" />
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12" ng-Controller="CommentController">  <!-- comments -->   
+            <label for="status">Comments</label>
+            <div ng-repeat="comment in comments" class="well">
+              <p class="name">{{comment.authorname}}</p>
+              <p class="msg">{{comment.commentmsg}}</p>
+              <p class="created">{{comment.created_at}}</p>
+              <button type="button" class="btn btn-primary" ng-click="likeComment(comment.comment_id)" ng-if="!comment.user_liked">Like</button> 
+              <button type="button" class="btn btn-info" ng-click="unlikeComment(comment.comment_id)" ng-if="comment.user_liked">Unlike</button> 
+              <button type="submit" class="btn btn-secondary" ng-if="isMine(comment.fk_author_id)" data-toggle="modal" data-target="#comment-modal-{{comment.comment_id}}">Edit</button>
+              <button type="submit" class="btn btn-danger" ng-click="deleteComment(comment.comment_id)" ng-if="isMine(comment.fk_author_id)">Delete</button>
+              Liked by {{ comment.num_likes }}
+
+              <!-- Modal -->
+              <div id="comment-modal-{{comment.comment_id}}" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title">Edit Comment</h4>
+                    </div>
+                    <form ng-submit="updateComment(comment.comment_id)">
+                      <input type="text" ng-model="updatecomment.text" id="update-input"/>
+                      <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <form ng-submit="addcomment(post.post_id)">
+              <input type="text" class="form-control" id="comment" ng-model="comment.text" />
+              <button type="submit" class="btn btn-primary">Comment</button>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+    <div class="col-sm-2 sidenav">
+      <div class="well">
+         <img src = "/Images/ads1.jpg" class="homeads">
+      </div>
+      <div class="well">
+         <img src = "/Images/ads2.jpg" class="homeads">
+      </div>
+    </div>
+</div>
+
+</body>
+</html>
+

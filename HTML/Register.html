@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Register</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../CSS/custom.css">
+        <script type="text/javascript">
+            //Angular shit here
+            var myApp = angular.module("CMSCApp", []);/*define module with name myApp*/
+
+            myApp.controller('RegisterController', ['$scope', '$http', function($scope, $http){
+                $scope.register = function(){
+                    $http.post('/register', $scope.user).then(
+                        function(data){
+                            console.log(data);
+                            window.location.href=("/");
+                        },
+
+                        function(error){
+                            console.log(error);
+                        }
+                    );
+                };
+            }]);
+        </script>
+    </head>
+    <body ng-app="CMSCApp" background="http://wallpapercave.com/wp/e6CCgcI.jpg">
+        <div class="container-fluid text-center" style="margin:auto" ng-controller="RegisterController">
+            <div class="row">
+                <div class="col-md-2 col-md-offset-5 well card-div">
+                    <h3>Register</h3>
+                    <form ng-submit="register()" name="registerForm">
+                        <div class="form-group">
+                            <label for="usr">Email:</label>
+                            <input type="text" class="form-control" id="email" ng-model="user.email">
+                        </div>
+                        <div class="form-group">
+                            <label for="usr">Name:</label>
+                            <input type="text" class="form-control" id="name" ng-model="user.name">
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">Password:</label>
+                            <input type="password" class="form-control" id="pwd" ng-model="user.password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </form>
+                    <a id="linkbtn" href ="/login"><button type="button" class="btn btn-link">Already a pokemon?</button></a>
+                </div>
+                 <p class="title-head">Are you ready to be a pokemon?</p>
+            </div>
+        </div>
+    </body>
+</html>

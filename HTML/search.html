@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>Search</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquerpost.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/CSS/custom.css" media="screen"/>
+  <link href="https://fonts.googleapis.com/css?family=Bree+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+    <script>
+      var myApp = angular.module("myApp", []);/*define module with name myApp*/
+      var url = document.URL.split('/')
+      var lastArg = url[url.length-1]
+      
+      myApp.controller('NavController',['$scope', '$http', function($scope, $http){
+        $scope.nav=lastArg;
+      }]);
+
+      myApp.controller('SearchController', ['$scope', '$http', function($scope, $http) {
+        $scope.search = function() {
+          $http.get('/search/' + lastArg + '/' + $scope.searchText).then(
+            function(res){
+              $scope.results = res.data;
+            }            
+          );
+        };
+        $scope.clear = function(){
+          location.reload();
+        }
+        $scope.viewprofile = function(user_id){
+          window.location = "/profile/" + lastArg + "/view/" + user_id;
+        };
+      }]);
+    </script> 
+</head>
+<body ng-app="myApp">
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      <img src="/Images/logo.png" class="logo pull-left">
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right" ng-controller="NavController">
+          <li><a href="/home/{{nav}}">Home</a></li>
+          <li><a href="/profile/{{nav}}/view/{{nav}}">Profile</a></li>
+          <li><a href="/friends/{{nav}}">Friends</a></li>
+          <li><a href="/friendreq/{{nav}}">Friend Requests</a></li>
+          <li class="active"><a href="/search/{{nav}}">Search</a>
+          <li><a href="/logout">Log out</a>
+        </ul>
+      </div>
+    </div>
+  </nav>
+    
+  <div class="container-fluid text-center" ng-Controller="SearchController"><br>
+    <input class="search-bar-input search-div", ng-model="searchText" ng-change="search()"/>
+    <button class="btn btn-primary" ng-click="clear()"> Clear </button>
+    <div ng-repeat="x in results" class="searchnames" id="search-search">
+        <p class="msg">{{x.fullname}}</p>
+        <button class="btn btn-primary" ng-click="viewprofile(x.user_id)"> profile</button>
+    </div>
+  </div>
+
+  <img class="pika" src="http://vignette3.wikia.nocookie.net/animalcrossing/images/e/e1/Pikachu_vector_by_paperjoey-d3919s8.png/revision/latest?cb=20140531045521">
+
+</body>
+</html>
